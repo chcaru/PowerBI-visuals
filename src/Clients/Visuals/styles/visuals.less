@@ -467,6 +467,27 @@
     }
 }
 
+.streamChart {
+    .mainGraphicsContext {
+        path {
+            fill: none;
+            stroke-width: 3px;
+            stroke-linecap: round;
+        }
+
+        .catBackground path { // Replaced by .line-shadow; kept around until the deprecated render method can be removed.
+            stroke-width: 6px;
+            stroke: white;
+        }
+
+        .interactivity-line {
+            stroke: @whiteColor;
+            stroke-opacity: 0;
+            stroke-width: 10px;
+        }
+    }
+}
+
 .tableContainer {
     overflow: auto;
     /* table */

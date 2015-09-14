@@ -38,6 +38,7 @@ module powerbi.visuals {
         StackedColumn,
         ClusteredBar,
         StackedBar,
+        Stream,
         HundredPercentStackedBar,
         HundredPercentStackedColumn,
         Scatter,
@@ -1896,6 +1897,9 @@ module powerbi.visuals {
                     break;
                 case CartesianChartType.Scatter:
                     layers.push(createScatterChartLayer(cartesianOptions));
+                    break;
+                case CartesianChartType.Stream:
+                    //layers.push(createStreamChartLayer(cartesianOptions));
                     break;
                 case CartesianChartType.Waterfall:
                     layers.push(createWaterfallChartLayer(cartesianOptions));
