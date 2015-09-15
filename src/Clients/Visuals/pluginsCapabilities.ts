@@ -82,6 +82,8 @@ module powerbi.visuals.capabilities {
 
     export var scatterChart = powerbi.visuals.scatterChartCapabilities;
 
+    export var streamChart = powerbi.visuals.lineChartCapabilities;
+
     export var table = powerbi.visuals.tableCapabilities;
 
     export var matrix = powerbi.visuals.matrixCapabilities;

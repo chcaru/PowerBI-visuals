@@ -69,62 +69,63 @@ module powerbi.visuals {
         default = 1,
         area = 2,
         smooth = 4,
-        lineShadow = 8
+        lineShadow = 8,
+        stream = 16
     }
 
     /** 
      * Renders a data series as a line visual.
      */
     export class LineChart implements ICartesianVisual, IInteractiveVisual {
-        private static ClassName = 'lineChart';
-        private static MainGraphicsContextClassName = 'mainGraphicsContext';
-        private static CategoryClassName = 'cat';
-        private static CategoryClassSelector = '.cat';
-        private static CategoryValuePoint: ClassAndSelector = {
+        protected static ClassName = 'lineChart';
+        protected static MainGraphicsContextClassName = 'mainGraphicsContext';
+        protected static CategoryClassName = 'cat';
+        protected static CategoryClassSelector = '.cat';
+        protected static CategoryValuePoint: ClassAndSelector = {
             class: 'dot',
             selector: '.dot'
         };
-        private static CategoryAreaClassName = 'catArea';
-        private static CategoryAreaClassSelector = '.catArea';
-        private static HorizontalShift = 0;
-        private static CircleRadius = 4;
-        private static PathElementName = 'path';
-        private static CircleElementName = 'circle';
-        private static CircleClassName = 'selection-circle';
-        private static LineElementName = 'line';
+        protected static CategoryAreaClassName = 'catArea';
+        protected static CategoryAreaClassSelector = '.catArea';
+        protected static HorizontalShift = 0;
+        protected static CircleRadius = 4;
+        protected static PathElementName = 'path';
+        protected static CircleElementName = 'circle';
+        protected static CircleClassName = 'selection-circle';
+        protected static LineElementName = 'line';
         public static AreaFillOpacity = 0.4;
         public static DimmedAreaFillOpacity = 0.2;
 
-        private isInteractiveChart: boolean;
-        private isScrollable: boolean;
+        protected isInteractiveChart: boolean;
+        protected isScrollable: boolean;
 
-        private element: JQuery;
-        private mainGraphicsContext: D3.Selection;
-        private clearCatcher: D3.Selection;
-        private mainGraphicsSVG: D3.Selection;
-        private toolTipContext: D3.Selection;
-        private options: CartesianVisualInitOptions;
-        private dataViewCat: DataViewCategorical;
+        protected element: JQuery;
+        protected mainGraphicsContext: D3.Selection;
+        protected clearCatcher: D3.Selection;
+        protected mainGraphicsSVG: D3.Selection;
+        protected toolTipContext: D3.Selection;
+        protected options: CartesianVisualInitOptions;
+        protected dataViewCat: DataViewCategorical;
 
-        private colors: IDataColorPalette;
-        private host: IVisualHostServices;
-        private data: LineChartData;
-        private clippedData: LineChartData;
-        private lineType: LineChartType;
-        private cartesianVisualHost: ICartesianVisualHost;
+        protected colors: IDataColorPalette;
+        protected host: IVisualHostServices;
+        protected data: LineChartData;
+        protected clippedData: LineChartData;
+        protected lineType: LineChartType;
+        protected cartesianVisualHost: ICartesianVisualHost;
 
-        private xAxisProperties: IAxisProperties;
-        private yAxisProperties: IAxisProperties;
-        private margin: IMargin;
-        private currentViewport: IViewport;
+        protected xAxisProperties: IAxisProperties;
+        protected yAxisProperties: IAxisProperties;
+        protected margin: IMargin;
+        protected currentViewport: IViewport;
 
-        private selectionCircles: D3.Selection[];
-        private dragHandle: D3.Selection;
-        private hoverLine: D3.Selection;
-        private lastInteractiveSelectedColumnIndex: number;
+        protected selectionCircles: D3.Selection[];
+        protected dragHandle: D3.Selection;
+        protected hoverLine: D3.Selection;
+        protected lastInteractiveSelectedColumnIndex: number;
 
-        private interactivityService: IInteractivityService;
-        private animator: IGenericAnimator;
+        protected interactivityService: IInteractivityService;
+        protected animator: IGenericAnimator;
 
         public static customizeQuery(options: CustomizeQueryOptions): void {
             var dataViewMapping = options.dataViewMappings[0];
@@ -446,6 +447,9 @@ module powerbi.visuals {
                             this.cartesianVisualHost.getSharedColors(),
                             CartesianChart.getIsScalar(dataView.metadata ? dataView.metadata.objects : null, lineChartProps.categoryAxis.axisType, categoryType),
                             this.interactivityService);
+
+                        
+
                         this.data = convertedData;
                     }
                 }
@@ -603,7 +607,7 @@ module powerbi.visuals {
             SVGUtil.flushAllD3TransitionsIfNeeded(this.options);
         }
 
-        private renderNew(duration: number): void {
+        protected renderNew(duration: number): void {
             var data = this.clippedData ? this.clippedData : this.data;
             if (!data)
                 return;
@@ -1043,11 +1047,11 @@ module powerbi.visuals {
             return Math.min(Math.round((availableWidth - categoryThickness * CartesianChart.OuterPaddingRatio * 2) / categoryThickness), origCatgSize);
         }
 
-        private getAvailableWidth(): number {
+        protected getAvailableWidth(): number {
             return this.currentViewport.width - (this.margin.left + this.margin.right);
         }
 
-        private getAvailableHeight(): number {
+        protected getAvailableHeight(): number {
             return this.currentViewport.height - (this.margin.top + this.margin.bottom);
         }
 
@@ -1063,7 +1067,7 @@ module powerbi.visuals {
             return newSeries;
         }
 
-        private extraLineShift(): number {
+        protected extraLineShift(): number {
             if (!this.data.isScalar) {
                 // This will place the line points in the middle of the bands
                 // So they center with Labels when scale is ordinal.
@@ -1109,7 +1113,7 @@ module powerbi.visuals {
             return index;
         }
 
-        private getXValue(d: LineChartDataPoint): any {
+        protected getXValue(d: LineChartDataPoint): any {
             return this.data.isScalar ? d.categoryValue : d.categoryIndex;
         }
         
@@ -1117,7 +1121,7 @@ module powerbi.visuals {
          * This checks to see if a data point is isolated, which means
          * the previous and next data point are both null.
          */
-        private shouldDrawCircle(d: LineChartSeries, i: number): boolean {
+        protected shouldDrawCircle(d: LineChartSeries, i: number): boolean {
             var dataLength = d.data.length;
             var isLastPoint = i === (dataLength - 1);
             var isFirstPoint = i === 0;

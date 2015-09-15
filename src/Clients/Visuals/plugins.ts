@@ -232,6 +232,15 @@ module powerbi.visuals.plugins {
         create: () => new CartesianChart({ chartType: CartesianChartType.Scatter })
     };
 
+    export var streamChart: IVisualPlugin = {
+        name: 'streamChart',
+        watermarkKey: 'stream',
+        capabilities: capabilities.lineChart,
+        create: () => new CartesianChart({ chartType: CartesianChartType.Stream }),
+        customizeQuery: StreamChart.customizeQuery,
+        getSortableRoles: (visualSortableOptions?: VisualSortableOptions) => ColumnChart.getSortableRoles(visualSortableOptions),
+    };
+
     export var table: IVisualPlugin = {
         name: 'table',
         watermarkKey: 'table',

@@ -154,6 +154,8 @@
 /// <reference path="capabilities/scatterChart.capabilities.ts"/>
 /// <reference path="cartesian/scatterChart.ts"/>
 
+/// <reference path="cartesian/streamChart.ts"/>
+
 /// <reference path="capabilities/slicer.capabilities.ts"/>
 /// <reference path="visuals/slicer.ts"/>
 /// <reference path="visuals/table.ts"/>

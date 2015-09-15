@@ -1899,7 +1899,7 @@ module powerbi.visuals {
                     layers.push(createScatterChartLayer(cartesianOptions));
                     break;
                 case CartesianChartType.Stream:
-                    //layers.push(createStreamChartLayer(cartesianOptions));
+                    layers.push(createStreamChartLayer(/* inComboChart */ false, cartesianOptions));
                     break;
                 case CartesianChartType.Waterfall:
                     layers.push(createWaterfallChartLayer(cartesianOptions));
@@ -1964,6 +1964,16 @@ module powerbi.visuals {
             }
 
             return new LineChart(options);
+        }
+
+        function createStreamChartLayer(inComboChart: boolean, defaultOptions: CartesianVisualConstructorOptions): StreamChart {
+            let options: CartesianVisualConstructorOptions = {
+                animator: defaultOptions.animator,
+                interactivityService: defaultOptions.interactivityService,
+                isScrollable: defaultOptions.isScrollable
+            };
+            
+            return new StreamChart(options);
         }
 
         function createScatterChartLayer(defaultOptions: CartesianVisualConstructorOptions): ScatterChart {
