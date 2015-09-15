@@ -35,7 +35,11 @@
             var data = this.clippedData ? this.clippedData : this.data;
             if (!data)
                 return;
-            
+          
+            var margin = this.margin;
+            var viewport = this.currentViewport;
+            var height = viewport.height - (margin.top + margin.bottom);
+
             var xScale = this.xAxisProperties.scale;
             var yScale = this.yAxisProperties.scale;
 
@@ -43,7 +47,10 @@
             
             var area = d3.svg.area()
                 .x((d: StreamChartDataPoint) => xScale(this.getXValue(d)))
-                .y0((d: StreamChartDataPoint) => yScale(d.stackedValueBelow))
+                .y0((d: StreamChartDataPoint) => {
+                    var y0 = yScale(d.stackedValueBelow);
+                    return y0 <= height ? y0 : height;
+                })
                 .y1((d: StreamChartDataPoint) => yScale(d.stackedValue))
                 .defined((d: StreamChartDataPoint) => d.stackedValue !== null)
                 .interpolate('cardinal');
