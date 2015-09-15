@@ -74,6 +74,7 @@ module powerbi.visuals {
             createPlugin(plugins, powerbi.visuals.plugins.hundredPercentStackedColumnChart, () => new CartesianChart({ chartType: CartesianChartType.HundredPercentStackedColumn, isScrollable: true, animator: new WebColumnChartAnimator() }));
             createPlugin(plugins, powerbi.visuals.plugins.lineChart, () => new CartesianChart({ chartType: CartesianChartType.Line, isScrollable: true, animator: new BaseAnimator() }));
             createPlugin(plugins, powerbi.visuals.plugins.areaChart, () => new CartesianChart({ chartType: CartesianChartType.Area, isScrollable: true, animator: new BaseAnimator() }));
+            createPlugin(plugins, powerbi.visuals.plugins.streamChart, () => new CartesianChart({ chartType: CartesianChartType.Stream, isScrollable: true, animator: new BaseAnimator() }));
             createPlugin(plugins, powerbi.visuals.plugins.lineClusteredColumnComboChart, () => new CartesianChart({ chartType: CartesianChartType.LineClusteredColumnCombo, isScrollable: true, animator: new WebColumnChartAnimator() }));
             createPlugin(plugins, powerbi.visuals.plugins.lineStackedColumnComboChart, () => new CartesianChart({ chartType: CartesianChartType.LineStackedColumnCombo, isScrollable: true, animator: new WebColumnChartAnimator() }));
             createPlugin(plugins, powerbi.visuals.plugins.pieChart, () => new DonutChart({ sliceWidthRatio: 0, animator: new WebDonutChartAnimator(), isScrollable: true }));
