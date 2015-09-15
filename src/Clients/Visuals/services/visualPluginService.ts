@@ -158,6 +158,7 @@ module powerbi.visuals {
                     powerbi.visuals.plugins.hundredPercentStackedColumnChart,
                     powerbi.visuals.plugins.lineChart,
                     powerbi.visuals.plugins.areaChart,
+                    powerbi.visuals.plugins.streamChart,
                     powerbi.visuals.plugins.lineStackedColumnComboChart,
                     powerbi.visuals.plugins.lineClusteredColumnComboChart,
                     powerbi.visuals.plugins.waterfallChart,
