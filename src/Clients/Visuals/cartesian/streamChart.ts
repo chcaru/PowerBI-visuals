@@ -169,39 +169,37 @@ module powerbi.visuals {
                 .remove();
 
             var lineSeries = data.series.splice(0);
+            
+            var bottomSeries = _.min(lineSeries, s => _.reduce(s.data, (i, d) => i + (<StreamChartDataPoint>d).stackedValueBelow, 0));
 
-            //if (StreamChart.shouldShowGeneralProperty(this.dataView.metadata.objects, 'type')) {
-                var bottomSeries = _.min(lineSeries, s => _.reduce(s.data, (i, d) => i + (<StreamChartDataPoint>d).stackedValueBelow, 0));
+            var bottomLineSeries: LineChartSeries = {
+                key: bottomSeries.key + bottomSeries.key,
+                lineIndex: lineSeries.length,
+                color: bottomSeries.color,
+                xCol: bottomSeries.xCol,
+                yCol: bottomSeries.yCol,
+                identity: bottomSeries.identity,
+                selected: bottomSeries.selected,
+                data: _.map(bottomSeries.data, d => <StreamChartDataPoint>{
+                    categoryValue: d.categoryValue,
+                    value: (<StreamChartDataPoint>d).stackedValueBelow,
+                    stackedValue: (<StreamChartDataPoint>d).stackedValueBelow,
+                    stackedValueBelow: (<StreamChartDataPoint>d).stackedValueBelow,
+                    categoryIndex: d.categoryIndex,
+                    seriesIndex: lineSeries.length, 
+                    key: d.key + d.key
+                })
+            };
 
-                var bottomLineSeries: LineChartSeries = {
-                    key: bottomSeries.key + bottomSeries.key,
-                    lineIndex: lineSeries.length,
-                    color: bottomSeries.color,
-                    xCol: bottomSeries.xCol,
-                    yCol: bottomSeries.yCol,
-                    identity: bottomSeries.identity,
-                    selected: bottomSeries.selected,
-                    data: _.map(bottomSeries.data, d => <StreamChartDataPoint>{
-                        categoryValue: d.categoryValue,
-                        value: (<StreamChartDataPoint>d).stackedValueBelow,
-                        stackedValue: (<StreamChartDataPoint>d).stackedValueBelow,
-                        stackedValueBelow: (<StreamChartDataPoint>d).stackedValueBelow,
-                        categoryIndex: d.categoryIndex,
-                        seriesIndex: lineSeries.length, 
-                        key: d.key + d.key
-                    })
-                };
+            lineSeries.push(bottomLineSeries);
 
-                lineSeries.push(bottomLineSeries);
-            //}
-
-                var lines = this.mainGraphicsContext.selectAll(".line").data(lineSeries, (d: LineChartSeries) => d.key === bottomLineSeries.key ? d.key : d.identity.getKey());
+            var lines = this.mainGraphicsContext.selectAll(".line").data(lineSeries, (d: LineChartSeries) => d.key === bottomLineSeries.key ? d.key : d.identity.getKey());
             lines.enter()
                 .append(LineChart.PathElementName)
                 .classed('line', true);
             lines
                 .style('stroke', (d: LineChartSeries) => d.color)
-                .style('stroke-opacity', (d: LineChartSeries) => /*StreamChart.shouldShowGeneralProperty(this.dataView.metadata.objects, 'type') ? 0 :*/ ColumnUtil.getFillOpacity(d.selected, false, hasSelection, false))
+                .style('stroke-opacity', (d: LineChartSeries) => ColumnUtil.getFillOpacity(d.selected, false, hasSelection, false))
                 .transition()
                 .ease('linear')
                 .duration(duration)
