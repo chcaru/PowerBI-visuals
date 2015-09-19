@@ -241,6 +241,13 @@ module powerbi.visuals.plugins {
         getSortableRoles: (visualSortableOptions?: VisualSortableOptions) => ColumnChart.getSortableRoles(visualSortableOptions),
     };
 
+    export var voronoiChart: IVisualPlugin = {
+        name: 'voronoiChart',
+        watermarkKey: 'voronoi',
+        capabilities: capabilities.scatterChart,
+        create: () => new CartesianChart({ chartType: CartesianChartType.Voronoi })
+    };
+
     export var table: IVisualPlugin = {
         name: 'table',
         watermarkKey: 'table',

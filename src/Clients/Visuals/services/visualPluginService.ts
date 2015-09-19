@@ -80,6 +80,7 @@ module powerbi.visuals {
             createPlugin(plugins, powerbi.visuals.plugins.pieChart, () => new DonutChart({ sliceWidthRatio: 0, animator: new WebDonutChartAnimator(), isScrollable: true }));
             createPlugin(plugins, powerbi.visuals.plugins.scatterChart, () => new CartesianChart({ chartType: CartesianChartType.Scatter, isScrollable: true, animator: new BaseAnimator() }));
             createPlugin(plugins, powerbi.visuals.plugins.treemap, () => new Treemap({ animator: new WebTreemapAnimator, isScrollable: true }));
+            createPlugin(plugins, powerbi.visuals.plugins.voronoiChart, () => new CartesianChart({ chartType: CartesianChartType.Voronoi, isScrollable: true, animator: new BaseAnimator() }));
             createPlugin(plugins, powerbi.visuals.plugins.waterfallChart, () => new CartesianChart({ chartType: CartesianChartType.Waterfall, isScrollable: true }));
         }
 

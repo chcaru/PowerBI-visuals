@@ -174,6 +174,7 @@
 /// <reference path="cartesian/waterfallChart.ts"/>
 
 /// <reference path="cartesian/streamChart.ts"/>
+/// <reference path="cartesian/voronoiChart.ts"/>
 
 /// <reference path="tooltip.ts"/>
 

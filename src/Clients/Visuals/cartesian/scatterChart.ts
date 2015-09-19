@@ -85,44 +85,44 @@ module powerbi.visuals {
     }
 
     export class ScatterChart implements ICartesianVisual, IInteractiveVisual {
-        private static ScatterChartCircleTagName = 'circle';
-        private static BubbleRadius = 3 * 2;
+        protected static ScatterChartCircleTagName = 'circle';
+        protected static BubbleRadius = 3 * 2;
         public static DefaultBubbleOpacity = 0.85;
         public static DimmedBubbleOpacity = 0.4;
         // Chart Area and size range values as defined by PV charts
-        private static AreaOf300By300Chart = 90000;
-        private static MinSizeRange = 200;
-        private static MaxSizeRange = 3000;
-        private static ClassName = 'scatterChart';
-        private static MainGraphicsContextClassName = 'mainGraphicsContext';
+        protected static AreaOf300By300Chart = 90000;
+        protected static MinSizeRange = 200;
+        protected static MaxSizeRange = 3000;
+        protected static ClassName = 'scatterChart';
+        protected static MainGraphicsContextClassName = 'mainGraphicsContext';
 
-        private static DotClasses: ClassAndSelector = {
+        protected static DotClasses: ClassAndSelector = {
             class: 'dot',
             selector: '.dot'
         };
 
-        private svg: D3.Selection;
-        private element: JQuery;
-        private mainGraphicsContext: D3.Selection;
-        private clearCatcher: D3.Selection;
-        private mainGraphicsG: D3.Selection;
-        private currentViewport: IViewport;
-        private style: IVisualStyle;
-        private data: ScatterChartData;
-        private dataView: DataView;
-        private host: IVisualHostServices;
-        private margin: IMargin;
-        private xAxisProperties: IAxisProperties;
-        private yAxisProperties: IAxisProperties;
-        private colors: IDataColorPalette;
-        private options: VisualInitOptions;
-        private interactivity: InteractivityOptions;
-        private cartesianVisualHost: ICartesianVisualHost;
-        private isInteractiveChart: boolean;
-        private interactivityService: IInteractivityService;
-        private categoryAxisProperties: DataViewObject;
-        private valueAxisProperties: DataViewObject;
-        private animator: IGenericAnimator;
+        protected svg: D3.Selection;
+        protected element: JQuery;
+        protected mainGraphicsContext: D3.Selection;
+        protected clearCatcher: D3.Selection;
+        protected mainGraphicsG: D3.Selection;
+        protected currentViewport: IViewport;
+        protected style: IVisualStyle;
+        protected data: ScatterChartData;
+        protected dataView: DataView;
+        protected host: IVisualHostServices;
+        protected margin: IMargin;
+        protected xAxisProperties: IAxisProperties;
+        protected yAxisProperties: IAxisProperties;
+        protected colors: IDataColorPalette;
+        protected options: VisualInitOptions;
+        protected interactivity: InteractivityOptions;
+        protected cartesianVisualHost: ICartesianVisualHost;
+        protected isInteractiveChart: boolean;
+        protected interactivityService: IInteractivityService;
+        protected categoryAxisProperties: DataViewObject;
+        protected valueAxisProperties: DataViewObject;
+        protected animator: IGenericAnimator;
 
         constructor(options: ScatterChartConstructorOptions) {
             if (options) {

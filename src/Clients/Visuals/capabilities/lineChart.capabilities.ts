@@ -50,6 +50,10 @@ module powerbi.visuals {
                     formatString: {
                         type: { formatting: { formatString: true } },
                     },
+                    type: {
+                        displayName: 'Stream',
+                        type: { bool: true }
+                    }
                 },
             },
             legend: {

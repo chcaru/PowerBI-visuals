@@ -48,7 +48,8 @@ module powerbi.visuals {
         LineClusteredColumnCombo,
         LineStackedColumnCombo,
         DataDotClusteredColumnCombo,
-        DataDotStackedColumnCombo
+        DataDotStackedColumnCombo,
+        Voronoi
     }
 
     export interface CalculateScaleAndDomainOptions {
@@ -999,7 +1000,7 @@ module powerbi.visuals {
         }
 
         private shouldRenderSecondaryAxis(axisProperties: IAxisProperties): boolean {
-            if (!axisProperties) {
+            if (!axisProperties || axisProperties.overrideShow) {
                 return false;
             }
             if (!this.valueAxisProperties || this.valueAxisProperties["secShow"] == null || this.valueAxisProperties["secShow"]) {
@@ -1010,7 +1011,7 @@ module powerbi.visuals {
         }
 
         private shouldRenderAxis(axisProperties: IAxisProperties, propertyName: string = "show"): boolean {
-            if (!axisProperties) {
+            if (!axisProperties || axisProperties.overrideShow) {
                 return false;
             }
             else if (axisProperties.isCategoryAxis && (!this.categoryAxisProperties || this.categoryAxisProperties[propertyName] == null || this.categoryAxisProperties[propertyName])) {
@@ -1898,6 +1899,9 @@ module powerbi.visuals {
                 case CartesianChartType.Scatter:
                     layers.push(createScatterChartLayer(cartesianOptions));
                     break;
+                case CartesianChartType.Voronoi:
+                    layers.push(createVoronoiChartLayer(cartesianOptions));
+                    break;
                 case CartesianChartType.Stream:
                     layers.push(createStreamChartLayer(/* inComboChart */ false, cartesianOptions));
                     break;
@@ -1979,6 +1983,11 @@ module powerbi.visuals {
         function createScatterChartLayer(defaultOptions: CartesianVisualConstructorOptions): ScatterChart {
             defaultOptions.isScrollable = false;
             return new ScatterChart(defaultOptions);
+        }
+
+        function createVoronoiChartLayer(defaultOptions: CartesianVisualConstructorOptions): VoronoiChart {
+            defaultOptions.isScrollable = false;
+            return new VoronoiChart(defaultOptions);
         }
 
         function createWaterfallChartLayer(defaultOptions: CartesianVisualConstructorOptions): WaterfallChart {

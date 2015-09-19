@@ -94,6 +94,7 @@ module powerbi.visuals {
          * (optional) Whether log scale is possible on the current domain.
          */
         isLogScaleAllowed?: boolean;
+        overrideShow?: boolean;
     }
 
     export interface IMargin {

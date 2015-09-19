@@ -33,18 +33,34 @@ module powerbi.visuals {
         stackedValueBelow: number;
     }
 
-    export class StreamChart extends LineChart {
+    //Implements IVisual to meet rules.
+    export class StreamChart extends LineChart implements IVisual {
+
+        protected dataView: DataView;
+        protected previousInterpolationMode: string;
 
         constructor(options: CartesianVisualConstructorOptions) {
 
             var streamOptions: LineChartConstructorOptions = options;
             streamOptions.chartType = LineChartType.stream;
 
+            this.previousInterpolationMode = null;
+
             super(streamOptions);
+        }
+
+        private static shouldShowGeneralProperty(objects, property: string): boolean {
+            return objects && objects.general && objects.general[property] !== false;
+        }
+
+        public init(options: VisualInitOptions): void {
+            super.init(<CartesianVisualInitOptions>options);
         }
 
         public setData(dataViews: DataView[]): void {
             super.setData(dataViews);
+
+            this.dataView = dataViews[0];
 
             var stack = d3.layout.stack()
                 .values((d: LineChartSeries) => d.data)
@@ -54,9 +70,40 @@ module powerbi.visuals {
                     d.stackedValueBelow = y0;
                     d.stackedValue = y0 + y;
                     d.value = d.stackedValue;
-                });
+                }); 
+
+            if (StreamChart.shouldShowGeneralProperty(this.dataView.metadata.objects, 'type')) {
+                stack = stack.offset('silhouette');
+            }
 
             this.data.series = stack(this.data.series);
+        }
+
+        public calculateAxesProperties(options: CalculateScaleAndDomainOptions): IAxisProperties[]{
+            var axes = super.calculateAxesProperties(options);
+
+            axes[1].overrideShow = StreamChart.shouldShowGeneralProperty(this.dataView.metadata.objects, 'type');
+             
+            return axes; 
+        }
+
+        public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
+
+            var instances: VisualObjectInstance[] = [];
+            
+            switch (options.objectName) {
+                case 'general':
+                    instances.push({
+                        objectName: options.objectName,
+                        selector: null,
+                        properties: {
+                            type: StreamChart.shouldShowGeneralProperty(this.dataView.metadata.objects, 'type')
+                        }
+                    });
+                    return instances;
+
+                default: return super.enumerateObjectInstances(options);
+            }
         }
 
         protected renderNew(duration: number): void {
@@ -82,13 +129,17 @@ module powerbi.visuals {
                 .y1((d: StreamChartDataPoint) => yScale(d.stackedValue))
                 .defined((d: StreamChartDataPoint) => d.stackedValue !== null)
                 .interpolate('cardinal');
+            
 
             var line = d3.svg.line()
                 .x((d: StreamChartDataPoint) => xScale(this.getXValue(d)))
-                .y((d: StreamChartDataPoint) => yScale(d.stackedValue))
+                .y((d: StreamChartDataPoint) => {
+                    var y0 = yScale(d.stackedValue);
+                    return y0 <= height ? y0 : height;
+                })
                 .defined((d: StreamChartDataPoint) => d.stackedValue !== null)
                 .interpolate('cardinal');
-
+            
             var extraLineShift = this.extraLineShift();
 
             this.mainGraphicsContext
@@ -105,6 +156,7 @@ module powerbi.visuals {
             areas.enter()
                 .append(LineChart.PathElementName)
                 .classed(LineChart.CategoryAreaClassName, true);
+
             areas
                 .style('fill', (d: LineChartSeries) => d.color)
                 .style('fill-opacity', (d: LineChartSeries) => (hasSelection && !d.selected) ? LineChart.DimmedAreaFillOpacity : LineChart.AreaFillOpacity)
@@ -112,16 +164,44 @@ module powerbi.visuals {
                 .ease('linear')
                 .duration(duration)
                 .attr('d', (d: LineChartSeries) => area(d.data));
+                
             areas.exit()
                 .remove();
 
-            var lines = this.mainGraphicsContext.selectAll(".line").data(data.series, (d: LineChartSeries) => d.identity.getKey());
+            var lineSeries = data.series.splice(0);
+
+            //if (StreamChart.shouldShowGeneralProperty(this.dataView.metadata.objects, 'type')) {
+                var bottomSeries = _.min(lineSeries, s => _.reduce(s.data, (i, d) => i + (<StreamChartDataPoint>d).stackedValueBelow, 0));
+
+                var bottomLineSeries: LineChartSeries = {
+                    key: bottomSeries.key + bottomSeries.key,
+                    lineIndex: lineSeries.length,
+                    color: bottomSeries.color,
+                    xCol: bottomSeries.xCol,
+                    yCol: bottomSeries.yCol,
+                    identity: bottomSeries.identity,
+                    selected: bottomSeries.selected,
+                    data: _.map(bottomSeries.data, d => <StreamChartDataPoint>{
+                        categoryValue: d.categoryValue,
+                        value: (<StreamChartDataPoint>d).stackedValueBelow,
+                        stackedValue: (<StreamChartDataPoint>d).stackedValueBelow,
+                        stackedValueBelow: (<StreamChartDataPoint>d).stackedValueBelow,
+                        categoryIndex: d.categoryIndex,
+                        seriesIndex: lineSeries.length, 
+                        key: d.key + d.key
+                    })
+                };
+
+                lineSeries.push(bottomLineSeries);
+            //}
+
+                var lines = this.mainGraphicsContext.selectAll(".line").data(lineSeries, (d: LineChartSeries) => d.key === bottomLineSeries.key ? d.key : d.identity.getKey());
             lines.enter()
                 .append(LineChart.PathElementName)
                 .classed('line', true);
             lines
                 .style('stroke', (d: LineChartSeries) => d.color)
-                .style('stroke-opacity', (d: LineChartSeries) => ColumnUtil.getFillOpacity(d.selected, false, hasSelection, false))
+                .style('stroke-opacity', (d: LineChartSeries) => /*StreamChart.shouldShowGeneralProperty(this.dataView.metadata.objects, 'type') ? 0 :*/ ColumnUtil.getFillOpacity(d.selected, false, hasSelection, false))
                 .transition()
                 .ease('linear')
                 .duration(duration)
@@ -131,7 +211,7 @@ module powerbi.visuals {
 
             var interactivityLines;
             if (this.interactivityService) {
-                interactivityLines = this.mainGraphicsContext.selectAll(".interactivity-line").data(data.series, (d: LineChartSeries) => d.identity.getKey());
+                interactivityLines = this.mainGraphicsContext.selectAll(".interactivity-line").data(lineSeries, (d: LineChartSeries) => d.key === bottomLineSeries.key ? d.key : d.identity.getKey());
                 interactivityLines.enter()
                     .append(LineChart.PathElementName)
                     .classed('interactivity-line', true);
@@ -197,7 +277,6 @@ module powerbi.visuals {
             }
 
             if (this.interactivityService) {
-                // Add tooltips
                 var seriesTooltipApplier = (tooltipEvent: TooltipEvent) => {
                     var pointX: number = tooltipEvent.elementCoordinates[0];
                     return LineChart.getTooltipInfoByPointX(this, tooltipEvent.data, pointX);
@@ -206,10 +285,9 @@ module powerbi.visuals {
                 TooltipManager.addTooltip(areas, seriesTooltipApplier, true);
                 TooltipManager.addTooltip(dots, (tooltipEvent: TooltipEvent) => tooltipEvent.data.tooltipInfo, true);
 
-                // Register interactivity
-                var dataPointsToBind: SelectableDataPoint[] = data.series.slice();
+                var dataPointsToBind: SelectableDataPoint[] = lineSeries.slice();
                 for (var i = 0, ilen = data.series.length; i < ilen; i++) {
-                    dataPointsToBind = dataPointsToBind.concat(data.series[i].data);
+                    dataPointsToBind = dataPointsToBind.concat(lineSeries[i].data);
                 }
                 var options: LineChartBehaviorOptions = {
                     dataPoints: dataPointsToBind,
@@ -224,5 +302,4 @@ module powerbi.visuals {
             }
         }
     }
-
 }
