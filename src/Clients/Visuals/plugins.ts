@@ -204,6 +204,13 @@ module powerbi.visuals.plugins {
         create: () => new Map({ filledMap: false })
     };
 
+    export var voronoiMap: IVisualPlugin = {
+        name: 'voronoiMap',
+        watermarkKey: 'map',
+        capabilities: capabilities.map,
+        create: () => new Map({ filledMap: false, voronoiMap: true })
+    };
+
     export var filledMap: IVisualPlugin = {
         name: 'filledMap',
         watermarkKey: 'filledMap',

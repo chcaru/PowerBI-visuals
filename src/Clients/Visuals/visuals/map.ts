@@ -32,6 +32,7 @@ module powerbi.visuals {
 
     export interface MapConstructionOptions {
         filledMap?: boolean;
+        voronoiMap?: boolean;
         geocoder?: IGeocoder;
         mapControlFactory?: IMapControlFactory;
     }
@@ -135,17 +136,17 @@ module powerbi.visuals {
     }
 
     export class MapBubbleDataPointRenderer implements IMapDataPointRenderer {
-        private mapControl: Microsoft.Maps.Map;
-        private values: MapDataPoint[];
-        private maxDataPointRadius: number;
-        private svg: D3.Selection;
-        private clearSvg: D3.Selection;
-        private clearCatcher: D3.Selection;
-        private bubbleGraphicsContext: D3.Selection;
-        private sliceGraphicsContext: D3.Selection;
-        private sliceLayout: D3.Layout.PieLayout;
-        private arc: D3.Svg.Arc;
-        private dataLabelsSettings: PointDataLabelsSettings;
+        protected mapControl: Microsoft.Maps.Map;
+        protected values: MapDataPoint[];
+        protected maxDataPointRadius: number;
+        protected svg: D3.Selection;
+        protected clearSvg: D3.Selection;
+        protected clearCatcher: D3.Selection;
+        protected bubbleGraphicsContext: D3.Selection;
+        protected sliceGraphicsContext: D3.Selection;
+        protected sliceLayout: D3.Layout.PieLayout;
+        protected arc: D3.Svg.Arc;
+        protected dataLabelsSettings: PointDataLabelsSettings;
 
         public constructor() {
             this.values = [];
@@ -736,6 +737,10 @@ module powerbi.visuals {
             if (options.filledMap) {
                 this.dataPointRenderer = new MapShapeDataPointRenderer();
                 this.enableGeoShaping = true;
+            }
+            else if (options.voronoiMap) {
+                this.dataPointRenderer = new MapVoronoiDataPointRenderer();
+                this.enableGeoShaping = false;
             }
             else {
                 this.dataPointRenderer = new MapBubbleDataPointRenderer();

@@ -144,6 +144,7 @@
 
 /// <reference path="capabilities/map.capabilities.ts"/>
 /// <reference path="visuals/map.ts"/>
+/// <reference path="visuals/voronoiMap.ts"/>
 /// <reference path="visuals/multiRowCard.ts"/>
 /// <reference path="capabilities/multiRowCard.capabilities.ts"/>
 /// <reference path="visuals/richTextbox.ts"/>

@@ -167,6 +167,7 @@ module powerbi.visuals {
                     powerbi.visuals.plugins.pieChart,
                     powerbi.visuals.plugins.treemap,
                     powerbi.visuals.plugins.map,
+                    powerbi.visuals.plugins.voronoiMap,
                     powerbi.visuals.plugins.table,
                     powerbi.visuals.plugins.matrix,
                     powerbi.visuals.plugins.filledMap,

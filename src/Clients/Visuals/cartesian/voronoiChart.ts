@@ -48,39 +48,13 @@ module powerbi.visuals {
         public setData(dataViews: DataView[]): void {
             super.setData(dataViews);
 
-            //var stack = d3.layout.stack()
-            //    .values((d: LineChartSeries) => d.data)
-            //    .x((d: LineChartDataPoint) => this.getXValue(d))
-            //    .y((d: LineChartDataPoint) => d.value)
-            //    .out((d: StreamChartDataPoint, y0: number, y: number) => {
-            //        d.stackedValueBelow = y0;
-            //        d.stackedValue = y0 + y;
-            //        d.value = d.stackedValue;
-            //    });
-
-            //var width = this.currentViewport.width - (this.margin ? (this.margin.left + this.margin.right) : 0);
-            //var height = this.currentViewport.height - (this.margin ? (this.margin.top + this.margin.bottom) : 0);
-
             var voronoi = d3.geom.voronoi()
                 .x((d: ScatterChartDataPoint) => d.x)
                 .y((d: ScatterChartDataPoint) => d.y);
-                //.clipExtent([[0, 0], [width, height]]);
 
             this.voronoiChartData = this.data;
             var voronoiPolygons = voronoi(this.data.dataPoints);
             this.voronoiChartData.voronoiPolygons = voronoiPolygons;
-
-            //this.data.dataPoints.push([
-            //    {
-            //        x: d3.max(voronoiPolygons, d => d3.max(d, e => e[0])),
-            //        y: d3.max(voronoiPolygons, d => d3.max(d, e => e[1])),
-            //        size: {},
-            //        radius: 
-            //    },
-            //    {
-            //        x: d3.min(voronoiPolygons, d => d3.max(d, e => e[0])),
-            //        y: d3.min(voronoiPolygons, d => d3.max(d, e => e[1]))
-            //    }]);
         }
 
         public render(suppressAnimations: boolean): void {
